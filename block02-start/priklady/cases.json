@@ -1,0 +1,12 @@
+[
+  {"file": "01_shadowing.mini", "command": "run", "stdout": "20\n30\n", "stderr_contains": "", "exit": 0},
+  {"file": "02_copy.mini", "command": "run", "stdout": "10\n30\n", "stderr_contains": "", "exit": 0},
+  {"file": "03_literals.mini", "command": "run", "stdout": "nil\ntrue\nMini\n", "stderr_contains": "", "exit": 0},
+  {"file": "04_duplicate.mini", "command": "check", "stdout": "", "stderr_contains": "duplicate variable 'x' in the same scope", "exit": 1},
+  {"file": "05_self_initializer.mini", "command": "check", "stdout": "", "stderr_contains": "cannot read variable 'x' in its own initializer", "exit": 1},
+  {"file": "06_unknown_read.mini", "command": "check", "stdout": "", "stderr_contains": "unknown variable 'missing'", "exit": 1},
+  {"file": "07_scope_escape.mini", "command": "check", "stdout": "", "stderr_contains": "unknown variable 'local'", "exit": 1},
+  {"file": "08_before_declaration.mini", "command": "check", "stdout": "", "stderr_contains": "unknown variable 'later'", "exit": 1},
+  {"file": "09_unknown_assignment.mini", "command": "check", "stdout": "", "stderr_contains": "unknown variable 'missing'", "exit": 1},
+  {"file": "10_sibling_scopes.mini", "command": "run", "stdout": "1\n2\n", "stderr_contains": "", "exit": 0}
+]

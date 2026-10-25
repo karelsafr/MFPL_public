@@ -1,0 +1,7 @@
+fun main() {
+  var x = 10;
+  {
+    var x = x;
+    print x;
+  }
+}

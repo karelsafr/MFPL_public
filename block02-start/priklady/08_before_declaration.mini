@@ -1,0 +1,4 @@
+fun main() {
+  print later;
+  var later = 10;
+}

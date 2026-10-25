@@ -1,0 +1,8 @@
+fun main() {
+  var value = nil;
+  print value;
+  value = true;
+  print value;
+  print "Mini";
+  (value);
+}
