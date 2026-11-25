@@ -1,0 +1,6 @@
+fun main() {
+  {
+    var local = 10;
+  }
+  print local;
+}
