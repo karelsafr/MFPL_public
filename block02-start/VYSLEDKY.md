@@ -1,34 +1,27 @@
 # Blok 02 – Resolver: vlastní příklady a výsledky
 
 Autor: Denisa Linh Phí
-Upravený soubor: `src/resolver.cpp` (pouze třída `Resolver`, infrastruktura beze změny)
 
-## Sestavení
+## Sestavení a ověření
 
 ```sh
 cmake -S . -B build
 cmake --build build
-```
-
-Ověření dodaných příkladů:
-
-```sh
 python3 overit.py --prekladac build/minic
 ```
 
-Výstup: `Všechny kontroly prošly.` (10× OK)
+Ověřovač vypsal `Všechny kontroly prošly.` – všech 10 dodaných příkladů OK.
 
 ## Vlastní příklady
 
-Příklady jsou v adresáři `vlastni_priklady/`. Testují případy, které dodaná
-sada nepokrývá: hlubší zanoření, rekurzi v závorkách, prázdný blok, přiřazení
-do vnější vazby s následným čtením, duplicitu uvnitř vnořeného bloku
-a vlastní inicializátor bez existující vnější proměnné.
+Napsala jsem šest vlastních příkladů do složky `vlastni_priklady/`. Chtěla jsem
+vyzkoušet věci, které dodaná sada neřeší – hlubší zanoření, víc závorek za sebou,
+prázdný blok a duplicitu uvnitř bloku.
 
 ### v01_trojite_zanoreni.mini
 
-Tři úrovně zastínění téhož jména. Ověřuje, že vyhledávání jde od nejvnitřnějšího
-scope ven a že se po uzavření bloku obnoví vnější vazba.
+Tři úrovně zastínění stejného jména. Chtěla jsem vidět, jestli se hledání opravdu
+vrací ven po jedné vrstvě.
 
 ```mini
 fun main() {
@@ -45,30 +38,19 @@ fun main() {
 }
 ```
 
-Příkaz: `./build/minic run vlastni_priklady/v01_trojite_zanoreni.mini`
+`./build/minic run vlastni_priklady/v01_trojite_zanoreni.mini`
 
-| Očekáváno | Skutečnost |
-|---|---|
-| `3`, `2`, `1` | `3`, `2`, `1` ✔ |
+Čekala jsem `3`, `2`, `1`. Vyšlo `3`, `2`, `1`.
 
-Kontrola přidělených ID přes `./build/minic cpp`:
-
-```cpp
-mini::Value mini_variable_0 = ...   // vnější x = 1
-  mini::Value mini_variable_1 = ... // prostřední x = 2
-    mini::Value mini_variable_2 = ... // vnitřní x = 3
-    ... = mini_variable_2;          // print uvnitř čte vnitřní x
-  ... = mini_variable_1;            // print uprostřed čte prostřední x
-... = mini_variable_0;              // print vně čte vnější x
-```
-
-Každé `print x` je navázané na jinou deklaraci – shadowing funguje správně
-a každá deklarace má vlastní `SymbolId`.
+Pak jsem se ještě podívala přes `./build/minic cpp`, jaká dostaly ID. Ve
+vygenerovaném C++ jsou tři různé proměnné `mini_variable_0`, `mini_variable_1`
+a `mini_variable_2` a každý `print` čte jinou z nich. Takže každá deklarace
+dostala svoje vlastní ID a nic se nepřepsalo.
 
 ### v02_hluboke_zavorky.mini
 
-Trojité závorky kolem jména. Ověřuje rekurzi v `resolveExpression` přes
-`GroupingExpression`.
+Trojité závorky kolem jména – chtěla jsem ověřit, že se resolver zanoří až
+dovnitř.
 
 ```mini
 fun main() {
@@ -77,16 +59,14 @@ fun main() {
 }
 ```
 
-Příkaz: `./build/minic run vlastni_priklady/v02_hluboke_zavorky.mini`
+`./build/minic run vlastni_priklady/v02_hluboke_zavorky.mini`
 
-| Očekáváno | Skutečnost |
-|---|---|
-| `7` | `7` ✔ |
+Čekala jsem `7`. Vyšlo `7`.
 
 ### v03_prazdny_blok.mini
 
-Blok bez jediného příkazu. Ověřuje, že `pushScope`/`popScope` fungují i pro
-prázdný seznam příkazů a že vnější vazba zůstane dostupná.
+Blok, ve kterém nic není. Zajímalo mě, jestli to nespadne, když se otevře
+a zavře prázdný scope.
 
 ```mini
 fun main() {
@@ -97,16 +77,13 @@ fun main() {
 }
 ```
 
-Příkaz: `./build/minic run vlastni_priklady/v03_prazdny_blok.mini`
+`./build/minic run vlastni_priklady/v03_prazdny_blok.mini`
 
-| Očekáváno | Skutečnost |
-|---|---|
-| `5` | `5` ✔ |
+Čekala jsem `5`. Vyšlo `5`.
 
 ### v04_prirazeni_do_vnejsi.mini
 
-Přiřazení do vnější proměnné z vnořeného bloku a čtení po uzavření bloku.
-Ověřuje, že přiřazení nezakládá novou vazbu a že změna přetrvá i po `popScope`.
+Přiřazení do proměnné z vnějšího bloku a potom její přečtení, až blok skončí.
 
 ```mini
 fun main() {
@@ -119,19 +96,17 @@ fun main() {
 }
 ```
 
-Příkaz: `./build/minic run vlastni_priklady/v04_prirazeni_do_vnejsi.mini`
+`./build/minic run vlastni_priklady/v04_prirazeni_do_vnejsi.mini`
 
-| Očekáváno | Skutečnost |
-|---|---|
-| `2`, `2` | `2`, `2` ✔ |
+Čekala jsem `2`, `2`. Vyšlo `2`, `2`.
 
-Kdyby přiřazení zakládalo novou proměnnou v bloku, druhý výpis by dal `1`.
+Druhý výpis je důležitý – kdyby přiřazení uvnitř bloku vyrobilo novou proměnnou
+místo toho, aby změnilo tu vnější, vypsalo by se `1`.
 
 ### v05_duplicita_ve_vnorenem.mini
 
-Duplicitní deklarace uvnitř vnořeného bloku (dodaný `04_duplicate.mini` testuje
-jen tělo `main`). Ověřuje, že kontrola duplicity se dívá do aktuálního scope,
-ne jen do toho vnějšího.
+Dvakrát stejné jméno, ale ve vnořeném bloku. Dodaný příklad `04_duplicate.mini`
+to zkouší jen přímo v těle `main`.
 
 ```mini
 fun main() {
@@ -143,17 +118,19 @@ fun main() {
 }
 ```
 
-Příkaz: `./build/minic check vlastni_priklady/v05_duplicita_ve_vnorenem.mini`
+`./build/minic check vlastni_priklady/v05_duplicita_ve_vnorenem.mini`
 
-| Očekáváno | Skutečnost |
-|---|---|
-| chyba `duplicate variable 'y' in the same scope` | `...v05_duplicita_ve_vnorenem.mini:5:9: resolve: duplicate variable 'y' in the same scope` ✔ |
+Čekala jsem chybu o duplicitě. Vypsalo se:
+
+```
+vlastni_priklady/v05_duplicita_ve_vnorenem.mini:5:9: resolve: duplicate variable 'y' in the same scope
+```
 
 ### v06_vlastni_inicializator_bez_vnejsi.mini
 
-Vlastní inicializátor v situaci, kdy žádná stejnojmenná vnější proměnná
-neexistuje (dodaný `05_self_initializer.mini` jednu má). Ověřuje, že chyba
-nevzniká kvůli zastínění, ale kvůli příznaku `defined = false`.
+`var pocet = pocet;` v situaci, kdy žádné jiné `pocet` neexistuje. Dodaný
+příklad `05_self_initializer.mini` má venku ještě jedno `x`, takže jsem chtěla
+vidět i variantu bez něj.
 
 ```mini
 fun main() {
@@ -161,25 +138,24 @@ fun main() {
 }
 ```
 
-Příkaz: `./build/minic check vlastni_priklady/v06_vlastni_inicializator_bez_vnejsi.mini`
+`./build/minic check vlastni_priklady/v06_vlastni_inicializator_bez_vnejsi.mini`
 
-| Očekáváno | Skutečnost |
-|---|---|
-| chyba `cannot read variable 'pocet' in its own initializer` | `...v06_vlastni_inicializator_bez_vnejsi.mini:2:15: resolve: cannot read variable 'pocet' in its own initializer` ✔ |
+Čekala jsem chybu o vlastním inicializátoru. Vypsalo se:
 
-Kdyby `declare` zapsalo jméno až po zpracování inicializátoru, hlásilo by se
-`unknown variable 'pocet'` – tedy jiná chyba. Pořadí declare → inicializátor →
-define je tedy skutečně rozlišitelné testem.
+```
+vlastni_priklady/v06_vlastni_inicializator_bez_vnejsi.mini:2:15: resolve: cannot read variable 'pocet' in its own initializer
+```
+
+Tenhle příklad mi pomohl pochopit, proč na pořadí v `declare` záleží. Jméno se
+musí zapsat do mapy ještě před zpracováním inicializátoru – kdyby se zapsalo až
+potom, nenašlo by se a hlásilo by se `unknown variable 'pocet'`. Jsou to dvě
+různé hlášky, takže to jde poznat.
 
 ## Shrnutí
 
-| Sada | Počet | Výsledek |
-|---|---|---|
-| Dodané příklady (`priklady/`) | 10 | 10× OK (`overit.py`) |
-| Vlastní příklady (`vlastni_priklady/`) | 6 | 6× odpovídá očekávání |
+Dodané příklady: 10 z 10 OK podle `overit.py`.
+Vlastní příklady: 6 z 6 vyšlo tak, jak jsem čekala.
 
-## Meze testů
-
-Testy ověřují jen zvolenou rodinu vstupů a tuto implementaci. Neověřují
-chování pro konstrukce, které dodaná verze AST nemá (funkce s parametry,
-cykly, logické operátory), ani výkon na rozsáhlých vstupech.
+Testy ale pokrývají jen to, co jsem vymyslela, a jen tuhle verzi AST – nejsou
+tam funkce s parametry, cykly ani logické operátory, protože je zadaný jazyk
+zatím nemá.
