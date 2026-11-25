@@ -1,4 +1,4 @@
-# Blok 02 – Resolver: vlastní příklady a výsledky
+# Blok 02: Resolver, vlastní příklady a výsledky
 
 Autor: Denisa Linh Phí
 
@@ -10,12 +10,12 @@ cmake --build build
 python3 overit.py --prekladac build/minic
 ```
 
-Ověřovač vypsal `Všechny kontroly prošly.` – všech 10 dodaných příkladů OK.
+Ověřovač vypsal `Všechny kontroly prošly.`, takže všech 10 dodaných příkladů je OK.
 
 ## Vlastní příklady
 
 Napsala jsem šest vlastních příkladů do složky `vlastni_priklady/`. Chtěla jsem
-vyzkoušet věci, které dodaná sada neřeší – hlubší zanoření, víc závorek za sebou,
+vyzkoušet věci, které dodaná sada neřeší: hlubší zanoření, víc závorek za sebou,
 prázdný blok a duplicitu uvnitř bloku.
 
 ### v01_trojite_zanoreni.mini
@@ -49,8 +49,7 @@ dostala svoje vlastní ID a nic se nepřepsalo.
 
 ### v02_hluboke_zavorky.mini
 
-Trojité závorky kolem jména – chtěla jsem ověřit, že se resolver zanoří až
-dovnitř.
+Trojité závorky kolem jména. Chtěla jsem ověřit, že se resolver zanoří až dovnitř.
 
 ```mini
 fun main() {
@@ -100,7 +99,7 @@ fun main() {
 
 Čekala jsem `2`, `2`. Vyšlo `2`, `2`.
 
-Druhý výpis je důležitý – kdyby přiřazení uvnitř bloku vyrobilo novou proměnnou
+Druhý výpis je důležitý. Kdyby přiřazení uvnitř bloku vyrobilo novou proměnnou
 místo toho, aby změnilo tu vnější, vypsalo by se `1`.
 
 ### v05_duplicita_ve_vnorenem.mini
@@ -147,7 +146,7 @@ vlastni_priklady/v06_vlastni_inicializator_bez_vnejsi.mini:2:15: resolve: cannot
 ```
 
 Tenhle příklad mi pomohl pochopit, proč na pořadí v `declare` záleží. Jméno se
-musí zapsat do mapy ještě před zpracováním inicializátoru – kdyby se zapsalo až
+musí zapsat do mapy ještě před zpracováním inicializátoru. Kdyby se zapsalo až
 potom, nenašlo by se a hlásilo by se `unknown variable 'pocet'`. Jsou to dvě
 různé hlášky, takže to jde poznat.
 
@@ -156,6 +155,6 @@ různé hlášky, takže to jde poznat.
 Dodané příklady: 10 z 10 OK podle `overit.py`.
 Vlastní příklady: 6 z 6 vyšlo tak, jak jsem čekala.
 
-Testy ale pokrývají jen to, co jsem vymyslela, a jen tuhle verzi AST – nejsou
+Testy ale pokrývají jen to, co jsem vymyslela, a jen tuhle verzi AST. Nejsou
 tam funkce s parametry, cykly ani logické operátory, protože je zadaný jazyk
 zatím nemá.
