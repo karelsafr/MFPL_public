@@ -34,13 +34,19 @@ public:
   void pushScope() { scopes_.push_back({}); } // Vstup do bloku -> vytvoření nové prázdné mapy
   void popScope() { scopes_.pop_back(); } // Výstup z bloku -> odebere vrchní mapu i s jejími jmény
 
-  SymbolId declare(const std::string &name) { // Registrace proměnné v aktuálním bloku
-    SymbolId id = nextId_; // vezmeme si aktiální hodnotu počítadla
-    nextId_ = nextId_ + 1; // posuneme počítadlo pro příští deklaraci
-    scopes_.back()[name] = Binding{id, false}; // do vrchní mapy uložíme jméno s id
+  // Registrace proměnné v aktuálním bloku -> duplicitní jméno ve stejném bloku je chyba
+  SymbolId declare(const std::string &name, std::size_t offset) {
+    if (scopes_.back().count(name) > 0) { // je to jméno už v TOMTO bloku?
+      error(offset, "duplicate variable '" + name + "' in the same scope" );
+    }
+    SymbolId id = nextId_; // vezmeme aktuální hodnotu počítadla
+    nextId_ = nextId_ + 1;  // posuneme ho pro příští deklaraci
+    scopes_.back()[name] = Binding{id, false}; // zapíšeme s defined=false
     return id;
   }
-
+  void define(const std::string &name) {
+    scopes_.back()[name].defined = true;
+  }
   const Binding *lookup(const std::string &name) const { // vrací ukazatel na nalezený binding nebo nullptr, když nic nenajde
     for (std::size_t i = scopes_.size(); i > 0; --i) {
       const auto &scope = scopes_[i - 1];
@@ -55,6 +61,7 @@ public:
   [[noreturn]] void error(std::size_t offset, const std::string &message) const {
     throw CompileError(Phase::Resolve, source_.name(), source_.span(offset), message);
   }
+
 private:
   const SourceText &source_;
   std::vector<std::unordered_map<std::string, Binding>> scopes_; // Vytvoření zásobníku map
