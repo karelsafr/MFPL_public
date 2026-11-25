@@ -154,7 +154,3 @@ různé hlášky, takže to jde poznat.
 
 Dodané příklady: 10 z 10 OK podle `overit.py`.
 Vlastní příklady: 6 z 6 vyšlo tak, jak jsem čekala.
-
-Testy ale pokrývají jen to, co jsem vymyslela, a jen tuhle verzi AST. Nejsou
-tam funkce s parametry, cykly ani logické operátory, protože je zadaný jazyk
-zatím nemá.
