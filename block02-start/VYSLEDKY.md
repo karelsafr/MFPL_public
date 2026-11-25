@@ -1,6 +1,6 @@
 # Blok 02 – Resolver: vlastní příklady a výsledky
 
-Autor: Denisa
+Autor: Denisa Linh Phí
 Upravený soubor: `src/resolver.cpp` (pouze třída `Resolver`, infrastruktura beze změny)
 
 ## Sestavení
