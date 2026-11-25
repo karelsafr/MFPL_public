@@ -42,11 +42,6 @@ fun main() {
 
 Čekala jsem `3`, `2`, `1`. Vyšlo `3`, `2`, `1`.
 
-Pak jsem se ještě podívala přes `./build/minic cpp`, jaká dostaly ID. Ve
-vygenerovaném C++ jsou tři různé proměnné `mini_variable_0`, `mini_variable_1`
-a `mini_variable_2` a každý `print` čte jinou z nich. Takže každá deklarace
-dostala svoje vlastní ID a nic se nepřepsalo.
-
 ### v02_hluboke_zavorky.mini
 
 Trojité závorky kolem jména. Chtěla jsem ověřit, že se resolver zanoří až dovnitř.
@@ -144,11 +139,6 @@ fun main() {
 ```
 vlastni_priklady/v06_vlastni_inicializator_bez_vnejsi.mini:2:15: resolve: cannot read variable 'pocet' in its own initializer
 ```
-
-Tenhle příklad mi pomohl pochopit, proč na pořadí v `declare` záleží. Jméno se
-musí zapsat do mapy ještě před zpracováním inicializátoru. Kdyby se zapsalo až
-potom, nenašlo by se a hlásilo by se `unknown variable 'pocet'`. Jsou to dvě
-různé hlášky, takže to jde poznat.
 
 ## Shrnutí
 
